@@ -1,0 +1,232 @@
+@import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #f9fafb;
+    color: #111827;
+  }
+  .dark body {
+    background: #030712;
+    color: #f9fafb;
+  }
+}
+
+/* scrollbar-thin is applied directly via CSS below, not via @apply */
+
+/* ── App ── */
+.app-root {
+  @apply min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors;
+}
+
+/* ── Navbar ── */
+.navbar {
+  @apply sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-4 py-2.5 flex items-center justify-between gap-3;
+}
+.navbar-logo {
+  @apply flex items-center gap-2 shrink-0;
+}
+.navbar-logo-icon {
+  @apply w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center;
+}
+.navbar-logo-text {
+  @apply font-bold text-gray-900 dark:text-white text-sm;
+}
+.navbar-backend-badge {
+  @apply flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium
+         bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300
+         hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors no-underline;
+}
+.navbar-backend-dot {
+  @apply w-2 h-2 rounded-full;
+}
+.navbar-backend-dot-online  { @apply bg-green-500; }
+.navbar-backend-dot-offline { @apply bg-red-500; }
+.navbar-backend-dot-checking { @apply bg-yellow-400 animate-pulse; }
+.navbar-actions {
+  @apply flex items-center gap-1.5 flex-wrap;
+}
+.navbar-template-switcher {
+  @apply flex bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5 gap-0.5;
+}
+.navbar-template-btn-active {
+  @apply px-3 py-1 text-xs font-medium rounded-md capitalize transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm;
+}
+.navbar-template-btn {
+  @apply px-3 py-1 text-xs font-medium rounded-md capitalize transition-all text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200;
+}
+.navbar-divider {
+  @apply w-px h-5 bg-gray-200 dark:bg-gray-700 mx-0.5;
+}
+.navbar-icon-btn {
+  @apply p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition-colors;
+}
+.navbar-user-info {
+  @apply flex items-center gap-2;
+}
+.navbar-username {
+  @apply text-xs text-gray-600 dark:text-gray-400;
+}
+.navbar-logout-btn {
+  @apply p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors;
+}
+
+/* ── Builder Page ── */
+.builder-layout {
+  @apply flex h-[calc(100vh-49px)] overflow-hidden;
+}
+.builder-form-panel {
+  @apply w-full lg:w-[420px] xl:w-[460px] shrink-0 overflow-y-auto border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-950;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+.builder-form-inner {
+  @apply p-4 space-y-3;
+}
+.builder-preview-panel {
+  @apply relative flex-1 overflow-auto bg-gray-200 dark:bg-gray-800 flex items-start justify-center p-6;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+.builder-empty-state {
+  @apply absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none z-10;
+}
+.builder-empty-icon-wrap {
+  @apply w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mb-4;
+}
+.builder-empty-title {
+  @apply text-lg font-semibold text-gray-700 dark:text-gray-300;
+}
+.builder-empty-subtitle {
+  @apply text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-xs;
+}
+.builder-preview-wrapper-hidden {
+  @apply shadow-2xl transition-opacity duration-300 opacity-0;
+}
+.builder-preview-wrapper-visible {
+  @apply shadow-2xl transition-opacity duration-300 opacity-100;
+}
+
+/* ── Auth Modal ── */
+.modal-overlay {
+  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm;
+}
+.modal-card {
+  @apply bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-6 w-full max-w-sm mx-4;
+}
+.modal-header {
+  @apply flex justify-between items-center mb-4;
+}
+.modal-title {
+  @apply text-lg font-bold text-gray-900 dark:text-white;
+}
+.modal-close-btn {
+  @apply p-1 text-gray-400 hover:text-gray-600 transition;
+}
+.modal-reason-banner {
+  @apply mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg;
+}
+.modal-reason-text {
+  @apply text-sm text-blue-700 dark:text-blue-300;
+}
+.modal-form {
+  @apply space-y-3;
+}
+.modal-footer-text {
+  @apply text-center text-xs text-gray-500 mt-3;
+}
+.modal-switch-btn {
+  @apply text-blue-600 hover:underline font-medium;
+}
+
+/* ── UI: Button ── */
+.btn-base {
+  @apply inline-flex items-center justify-center gap-2 font-medium rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed;
+}
+.btn-sm { @apply px-3 py-1.5 text-xs; }
+.btn-md { @apply px-4 py-2 text-sm; }
+.btn-primary { @apply bg-blue-600 hover:bg-blue-700 text-white; }
+.btn-secondary { @apply bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100; }
+.btn-danger { @apply bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-900/20 dark:hover:bg-red-900/40; }
+.btn-ghost { @apply hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400; }
+.btn-spinner { @apply animate-spin h-3.5 w-3.5; }
+
+/* ── UI: Input ── */
+.input-wrapper { @apply flex flex-col gap-1; }
+.input-label { @apply text-xs font-medium text-gray-600 dark:text-gray-400; }
+.input-field {
+  @apply w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition;
+}
+
+/* ── UI: Textarea ── */
+.textarea-field {
+  @apply w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition resize-none;
+}
+
+/* ── UI: Section ── */
+.section-container {
+  @apply border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden;
+}
+.section-toggle-btn {
+  @apply w-full flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition;
+}
+.section-title {
+  @apply text-sm font-semibold text-gray-700 dark:text-gray-300;
+}
+.section-chevron { @apply w-4 h-4 text-gray-500 transition-transform; }
+.section-chevron-open { @apply rotate-180; }
+.section-body {
+  @apply p-4 space-y-3 bg-white dark:bg-gray-900;
+}
+
+/* ── Form: PersonalInfo ── */
+.personal-info-grid { @apply grid grid-cols-2 gap-3; }
+.personal-info-full { @apply col-span-2; }
+
+/* ── Form: Skills ── */
+.skills-list { @apply space-y-2; }
+.skill-row { @apply flex gap-2 items-start; }
+.skill-category-input { @apply w-32 shrink-0; }
+.skill-remove-btn { @apply mt-1.5 p-1.5 text-red-400 hover:text-red-600 transition; }
+
+/* ── Form: Experience & Projects (shared accordion) ── */
+.accordion-list { @apply space-y-2; }
+.accordion-item {
+  @apply border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden;
+}
+.accordion-header {
+  @apply flex items-center justify-between px-3 py-2 bg-gray-50 dark:bg-gray-800/50;
+}
+.accordion-title-btn {
+  @apply flex-1 text-left text-sm font-medium text-gray-700 dark:text-gray-300 truncate;
+}
+.accordion-header-actions { @apply flex items-center gap-1; }
+.accordion-toggle-btn { @apply p-1 text-gray-400 hover:text-gray-600; }
+.accordion-delete-btn { @apply p-1 text-red-400 hover:text-red-600; }
+.accordion-body { @apply p-3 space-y-2; }
+.accordion-fields-grid { @apply grid grid-cols-2 gap-2; }
+.accordion-bullets-section { @apply space-y-1.5; }
+.accordion-bullets-label { @apply text-xs font-medium text-gray-600 dark:text-gray-400; }
+.accordion-bullet-row { @apply flex gap-2; }
+.accordion-bullet-delete-btn { @apply p-1 text-red-400 hover:text-red-600 self-start mt-1; }
+.accordion-bullet-actions { @apply flex gap-2; }
+
+/* ── Form: Education ── */
+.education-list { @apply space-y-3; }
+.education-item {
+  @apply p-3 border border-gray-200 dark:border-gray-700 rounded-lg space-y-2;
+}
+.education-item-inner { @apply flex justify-between items-start; }
+.education-fields-grid { @apply grid grid-cols-2 gap-2 flex-1 mr-2; }
+.education-full-col { @apply col-span-2; }
+.education-delete-btn { @apply p-1 text-red-400 hover:text-red-600 mt-1; }
+
+/* ── Resume Preview ── */
+.resume-preview-canvas {
+  @apply bg-white shadow-lg;
+}
