@@ -92,7 +92,7 @@ app.get('/', (_, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/resumebuilder';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://res:res@cluster0.aykgr7w.mongodb.net/?appName=Cluster0';
 
 mongoose
   .connect(MONGO_URI)
