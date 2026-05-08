@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useResumeStore } from '../store/resumeStore';
 
-const api = axios.create({ baseURL: '/api' });
+const api = axios.create({ baseURL: 'https://resumebuilder-r9iv.onrender.com/api' });
 
 api.interceptors.request.use((config) => {
   const token = useResumeStore.getState().token;
