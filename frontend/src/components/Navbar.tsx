@@ -16,7 +16,7 @@ export const Navbar: React.FC = () => {
   const [pendingDownload, setPendingDownload] = useState(false);
   const importRef = useRef<HTMLInputElement>(null);
   const [backendOnline, setBackendOnline] = useState<boolean | null>(null);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || 'https://resumebuilder-r9iv.onrender.com';
 
   useEffect(() => {
     fetch(`${backendUrl}/api/health`)
@@ -124,7 +124,7 @@ export const Navbar: React.FC = () => {
           title={backendOnline ? 'Backend is online' : 'Backend is offline'}
         >
           <span className={`navbar-backend-dot ${backendOnline === true ? 'navbar-backend-dot-online' : backendOnline === false ? 'navbar-backend-dot-offline' : 'navbar-backend-dot-checking'}`} />
-          <span>API :5000</span>
+          <span>API</span>
         </a>
 
         <div className="navbar-actions">
