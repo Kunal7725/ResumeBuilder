@@ -13,7 +13,6 @@ export const Navbar: React.FC = () => {
   const [authOpen, setAuthOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [pendingDownload, setPendingDownload] = useState(false);
   const importRef = useRef<HTMLInputElement>(null);
   const [backendOnline, setBackendOnline] = useState<boolean | null>(null);
   const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
@@ -27,13 +26,6 @@ export const Navbar: React.FC = () => {
   const templates: TemplateType[] = ['minimal', 'modern', 'professional'];
 
   const handleDownload = async () => {
-    if (!user) {
-      toast.error('Please sign in to download your resume');
-      setPendingDownload(true);
-      setAuthOpen(true);
-      return;
-    }
-
     setDownloading(true);
     try {
       await downloadPDF('resume-preview', `${resumeData.personalInfo.name || 'resume'}.pdf`);
@@ -43,13 +35,6 @@ export const Navbar: React.FC = () => {
       toast.error('Download failed. Make sure the preview is visible.');
     } finally {
       setDownloading(false);
-    }
-  };
-
-  const handleAuthSuccess = async () => {
-    if (pendingDownload) {
-      setPendingDownload(false);
-      setTimeout(() => handleDownload(), 300);
     }
   };
 
@@ -195,9 +180,8 @@ export const Navbar: React.FC = () => {
 
       {authOpen && (
         <AuthModal
-          onClose={() => { setAuthOpen(false); setPendingDownload(false); }}
-          onSuccess={handleAuthSuccess}
-          reason={pendingDownload ? '🔒 Sign in to download your resume as PDF.' : undefined}
+          onClose={() => setAuthOpen(false)}
+          onSuccess={() => setAuthOpen(false)}
         />
       )}
     </>
