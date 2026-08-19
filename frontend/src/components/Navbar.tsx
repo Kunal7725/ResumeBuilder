@@ -2,18 +2,29 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useResumeStore } from '../store/resumeStore';
 import { Button } from './ui/Button';
 import { downloadPDF, exportJSON, importJSON } from '../utils/pdf';
-import { Moon, Sun, Download, Upload, FileJson, LogOut, User, Save } from 'lucide-react';
+import { Moon, Sun, Download, Upload, FileJson, LogOut, User, Save, FolderOpen, Trash2 } from 'lucide-react';
 import type { TemplateType } from '../types/resume';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 import { AuthModal } from './AuthModal';
+
+interface SavedResume {
+  _id: string;
+  title: string;
+  template: TemplateType;
+  updatedAt: string;
+}
 
 export const Navbar: React.FC = () => {
   const { darkMode, toggleDarkMode, template, setTemplate, resumeData, importData, user, setUser } = useResumeStore();
   const [authOpen, setAuthOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [resumesOpen, setResumesOpen] = useState(false);
+  const [savedResumes, setSavedResumes] = useState<SavedResume[]>([]);
+  const [loadingResumes, setLoadingResumes] = useState(false);
   const importRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [backendOnline, setBackendOnline] = useState<boolean | null>(null);
   const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
@@ -21,7 +32,57 @@ export const Navbar: React.FC = () => {
     fetch(`${backendUrl}/api/health`)
       .then((r) => r.ok ? setBackendOnline(true) : setBackendOnline(false))
       .catch(() => setBackendOnline(false));
+  }, [backendUrl]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node))
+        setResumesOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
+
+  const fetchResumes = async () => {
+    setLoadingResumes(true);
+    try {
+      const { data } = await api.get('/resumes');
+      setSavedResumes(data);
+    } catch {
+      toast.error('Failed to load resumes');
+    } finally {
+      setLoadingResumes(false);
+    }
+  };
+
+  const handleOpenResumes = () => {
+    if (!resumesOpen) fetchResumes();
+    setResumesOpen((v) => !v);
+  };
+
+  const handleLoadResume = async (id: string) => {
+    try {
+      const { data } = await api.get(`/resumes/${id}`);
+      importData(data.data);
+      setTemplate(data.template);
+      setResumesOpen(false);
+      toast.success('Resume loaded!');
+    } catch {
+      toast.error('Failed to load resume');
+    }
+  };
+
+  const handleDeleteResume = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    try {
+      await api.delete(`/resumes/${id}`);
+      setSavedResumes((prev) => prev.filter((r) => r._id !== id));
+      toast.success('Resume deleted');
+    } catch {
+      toast.error('Failed to delete resume');
+    }
+  };
 
   const templates: TemplateType[] = ['minimal', 'modern', 'professional'];
 
@@ -131,6 +192,36 @@ export const Navbar: React.FC = () => {
           <Button variant="secondary" size="sm" onClick={handleSave} loading={saving}>
             <Save className="w-3.5 h-3.5" /> Save
           </Button>
+
+          {user && (
+            <div className="navbar-resumes-wrapper" ref={dropdownRef}>
+              <Button variant="ghost" size="sm" onClick={handleOpenResumes}>
+                <FolderOpen className="w-3.5 h-3.5" /> My Resumes
+              </Button>
+              {resumesOpen && (
+                <div className="navbar-resumes-dropdown">
+                  <p className="navbar-resumes-title">Saved Resumes</p>
+                  {loadingResumes ? (
+                    <p className="navbar-resumes-empty">Loading...</p>
+                  ) : savedResumes.length === 0 ? (
+                    <p className="navbar-resumes-empty">No saved resumes yet</p>
+                  ) : (
+                    savedResumes.map((r) => (
+                      <div key={r._id} className="navbar-resume-item" onClick={() => handleLoadResume(r._id)}>
+                        <div className="navbar-resume-info">
+                          <span className="navbar-resume-name">{r.title}</span>
+                          <span className="navbar-resume-meta">{r.template} · {new Date(r.updatedAt).toLocaleDateString()}</span>
+                        </div>
+                        <button className="navbar-resume-delete" onClick={(e) => handleDeleteResume(e, r._id)}>
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           <Button variant="ghost" size="sm" onClick={handleExport}>
             <FileJson className="w-3.5 h-3.5" /> Export

@@ -18,6 +18,11 @@ export const AuthModal: React.FC<Props> = ({ onClose, onSuccess, reason }) => {
   const [loading, setLoading] = useState(false);
   const { setUser } = useResumeStore();
 
+  const switchMode = (next: 'login' | 'signup') => {
+    setMode(next);
+    setForm({ name: '', email: '', password: '' });
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -30,6 +35,7 @@ export const AuthModal: React.FC<Props> = ({ onClose, onSuccess, reason }) => {
       onSuccess?.();
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Authentication failed';
+      console.error('Auth error:', err);
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -70,7 +76,7 @@ export const AuthModal: React.FC<Props> = ({ onClose, onSuccess, reason }) => {
 
         <p className="modal-footer-text">
           {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
-          <button onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+          <button onClick={() => switchMode(mode === 'login' ? 'signup' : 'login')}
             className="modal-switch-btn">
             {mode === 'login' ? 'Sign up' : 'Sign in'}
           </button>

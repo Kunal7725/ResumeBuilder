@@ -86,7 +86,10 @@ export function importJSON(file: File): Promise<ResumeData> {
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        resolve(JSON.parse(e.target?.result as string) as ResumeData);
+        const parsed = JSON.parse(e.target?.result as string);
+        if (typeof parsed !== 'object' || parsed === null || !parsed.personalInfo)
+          return reject(new Error('Invalid resume JSON: missing required fields'));
+        resolve(parsed as ResumeData);
       } catch {
         reject(new Error('Invalid JSON file'));
       }

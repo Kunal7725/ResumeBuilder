@@ -24,7 +24,8 @@ exports.signup = async (req, res) => {
     const token = signToken(user);
     res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email } });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('signup error:', err);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -40,6 +41,7 @@ exports.login = async (req, res) => {
     const token = signToken(user);
     res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('login error:', err);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };

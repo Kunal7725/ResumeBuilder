@@ -19,7 +19,6 @@ interface ResumeStore {
   toggleDarkMode: () => void;
   setUser: (user: User | null, token: string | null) => void;
   importData: (data: ResumeData) => void;
-  setResumeData: (data: ResumeData) => void;
 }
 
 const defaultData: ResumeData = {
@@ -50,7 +49,6 @@ export const useResumeStore = create<ResumeStore>()(
       toggleDarkMode: () => set((s) => ({ darkMode: !s.darkMode })),
       setUser: (user, token) => set({ user, token }),
       importData: (data) => set({ resumeData: data }),
-      setResumeData: (resumeData) => set({ resumeData }),
     }),
     { name: 'resume-builder' }
   )

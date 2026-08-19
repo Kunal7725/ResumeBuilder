@@ -32,7 +32,8 @@ exports.improveSummary = async (req, res) => {
     if (!improved) return res.status(500).json({ message: 'No response from AI' });
     res.json({ improved });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('improveSummary error:', err);
+    res.status(500).json({ message: 'AI request failed' });
   }
 };
 
@@ -40,6 +41,8 @@ exports.improveBullets = async (req, res) => {
   try {
     const { bullets, context } = req.body;
     if (!bullets?.length) return res.status(400).json({ message: 'Bullets are required' });
+    if (!Array.isArray(bullets) || bullets.some((b) => typeof b !== 'string'))
+      return res.status(400).json({ message: 'Bullets must be an array of strings' });
 
     if (!client) return res.status(503).json({ message: 'OpenAI API key not configured' });
 
@@ -52,7 +55,7 @@ exports.improveBullets = async (req, res) => {
         },
         {
           role: 'user',
-          content: `Context: ${context}\nBullets:\n${bullets.map((b, i) => `${i + 1}. ${b}`).join('\n')}`,
+          content: `Context: ${context || ''}\nBullets:\n${bullets.map((b, i) => `${i + 1}. ${b}`).join('\n')}`,
         },
       ],
       max_tokens: 500,
@@ -73,6 +76,7 @@ exports.improveBullets = async (req, res) => {
 
     res.json({ improved });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('improveBullets error:', err);
+    res.status(500).json({ message: 'AI request failed' });
   }
 };

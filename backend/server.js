@@ -10,8 +10,17 @@ const app = express();
 // Security headers
 app.use(helmet());
 
-// CORS — only allow configured client origin
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
+// CORS — allow configured origin, or any localhost port in development
+const allowedOrigin = process.env.CLIENT_URL;
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // allow non-browser requests
+    if (allowedOrigin && origin === allowedOrigin) return callback(null, true);
+    if (/^http:\/\/localhost:\d+$/.test(origin)) return callback(null, true);
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+}));
 
 // Body parser — limit payload size to prevent abuse
 app.use(express.json({ limit: '1mb' }));
@@ -92,7 +101,12 @@ app.get('/', (_, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://res:res@cluster0.aykgr7w.mongodb.net/?appName=Cluster0';
+const MONGO_URI = process.env.MONGO_URI;
+
+if (!MONGO_URI) {
+  console.error('MONGO_URI is not set in .env — server cannot start.');
+  process.exit(1);
+}
 
 mongoose
   .connect(MONGO_URI)
@@ -102,6 +116,5 @@ mongoose
   })
   .catch((err) => {
     console.error('MongoDB connection failed:', err.message);
-    console.log('Starting server without database (auth/resume save will not work)');
-    app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT} (no DB)`));
+    process.exit(1);
   });
